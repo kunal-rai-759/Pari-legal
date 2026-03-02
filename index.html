@@ -7,282 +7,172 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
-        .page { display: none; animation: fadeIn 0.5s ease-in-out; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .nav-scrolled { background: white; border-bottom: 1px solid #e2e8f0; padding: 0.75rem 0 !important; }
-        .nav-scrolled #logo { color: #0f172a; }
-        .nav-scrolled .nav-link { color: #475569; }
-        .nav-scrolled #menu-toggle { color: #0f172a; }
+        .nav-scrolled { background: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); padding: 1rem 0 !important; }
+        .mobile-menu { display: none; position: fixed; inset: 0; top: 70px; background: white; z-index: 40; padding: 2rem; }
+        .mobile-menu.active { display: block; }
     </style>
 </head>
-<body class="bg-white text-slate-900">
+<body class="bg-white text-slate-900 selection:bg-amber-100">
 
     <!-- NAVIGATION -->
-    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6 lg:py-8">
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-500 py-6 lg:py-10">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+            <div class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-slate-900 flex items-center justify-center text-amber-500 rounded-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/></svg>
                 </div>
-                <span id="logo" class="text-xl font-bold text-white transition-colors">PARI<span class="text-amber-500">&</span>CO</span>
+                <span id="logo-text" class="text-xl font-bold tracking-tight text-white">PARI<span class="text-amber-500">&</span>CO</span>
             </div>
             
-            <div class="hidden lg:flex space-x-8 text-[11px] font-black uppercase tracking-widest text-slate-300">
-                <button onclick="showPage('about')" class="nav-link hover:text-amber-500 transition-colors">About</button>
-                <button onclick="showPage('domains')" class="nav-link hover:text-amber-500 transition-colors">Domains</button>
-                <button onclick="showPage('team')" class="nav-link hover:text-amber-500 transition-colors">Team</button>
-                <button onclick="showPage('awards')" class="nav-link hover:text-amber-500 transition-colors">Awards</button>
-                <button onclick="showPage('articles')" class="nav-link hover:text-amber-500 transition-colors">Articles</button>
+            <div class="hidden lg:flex space-x-8 text-[11px] font-black uppercase tracking-widest text-slate-300" id="nav-links">
+                <a href="#about" class="hover:text-amber-500 transition-colors">About</a>
+                <a href="#domains" class="hover:text-amber-500 transition-colors">Domains</a>
+                <a href="#team" class="hover:text-amber-500 transition-colors">Team</a>
+                <a href="#contact" class="hover:text-amber-500 transition-colors">Contact</a>
             </div>
 
-            <button onclick="toggleMobileMenu()" id="menu-toggle" class="lg:hidden text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            <button onclick="toggleMenu()" class="lg:hidden text-white" id="menu-btn">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
         </div>
     </nav>
 
-    <!-- MOBILE OVERLAY -->
-    <div id="mobile-overlay" class="fixed inset-0 bg-white z-[60] hidden flex flex-col p-8">
-        <div class="flex justify-end mb-12">
-            <button onclick="toggleMobileMenu()" class="text-slate-900">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        <div class="flex flex-col space-y-6 text-3xl font-bold serif">
-            <button onclick="showPage('home')" class="text-left border-b pb-4">Home</button>
-            <button onclick="showPage('about')" class="text-left border-b pb-4">About</button>
-            <button onclick="showPage('domains')" class="text-left border-b pb-4">Domains</button>
-            <button onclick="showPage('team')" class="text-left border-b pb-4">Our Team</button>
-            <button onclick="showPage('awards')" class="text-left border-b pb-4">Awards</button>
-            <button onclick="showPage('articles')" class="text-left border-b pb-4">Legal Insights</button>
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="mobile-menu lg:hidden">
+        <div class="flex flex-col space-y-8">
+            <a href="#about" onclick="toggleMenu()" class="text-3xl font-bold text-slate-900 border-b pb-4">About</a>
+            <a href="#domains" onclick="toggleMenu()" class="text-3xl font-bold text-slate-900 border-b pb-4">Domains</a>
+            <a href="#team" onclick="toggleMenu()" class="text-3xl font-bold text-slate-900 border-b pb-4">Team</a>
+            <a href="#contact" onclick="toggleMenu()" class="text-3xl font-bold text-slate-900 border-b pb-4">Contact</a>
+            <div class="pt-10">
+                <p class="text-amber-600 font-bold uppercase text-xs tracking-widest mb-2">New Delhi HQ</p>
+                <p class="text-2xl font-bold font-serif">+91 11 4555 0100</p>
+            </div>
         </div>
     </div>
 
-    <!-- PAGE: HOME -->
-    <section id="home" class="page active relative h-screen flex items-center bg-slate-950 text-white overflow-hidden">
+    <!-- HERO -->
+    <section class="relative h-screen flex items-center bg-slate-950 text-white overflow-hidden">
         <div class="absolute inset-0 opacity-20">
             <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-amber-500/40 to-transparent"></div>
         </div>
         <div class="max-w-7xl mx-auto px-6 w-full z-10">
-            <span class="text-amber-500 font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block">New Delhi • Mumbai • Bangalore</span>
-            <h1 class="text-5xl lg:text-[100px] leading-tight font-bold mb-8 tracking-tighter">Bespoke Legal <br><span class="text-amber-500 italic font-normal">Sovereignty.</span></h1>
-            <p class="text-slate-400 text-lg lg:text-2xl max-w-2xl mb-12">The definitive legal partner for India's Fortune 500 enterprises and emerging unicorns.</p>
+            <span class="text-amber-500 font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block">Delhi • Mumbai • Bangalore</span>
+            <h1 class="text-5xl lg:text-[100px] leading-tight font-bold mb-8 tracking-tighter">Premier Indian <br><span class="text-amber-500 italic font-normal">Legal Advocacy.</span></h1>
+            <p class="text-slate-400 text-lg lg:text-2xl max-w-2xl mb-12">Dedicated legal partner for India's high-growth startups and established conglomerates.</p>
             <div class="flex flex-col sm:flex-row gap-4">
-                <button onclick="showPage('domains')" class="bg-amber-600 text-white px-10 py-4 font-bold text-xs uppercase tracking-widest text-center shadow-2xl">Practice Overview</button>
-                <button onclick="showPage('team')" class="border border-slate-700 text-white px-10 py-4 font-bold text-xs uppercase tracking-widest text-center hover:bg-slate-800">Meet The Partners</button>
+                <a href="#domains" class="bg-amber-600 text-white px-10 py-4 font-bold text-xs uppercase tracking-widest text-center shadow-2xl">Practice Overview</a>
+                <a href="#contact" class="border border-slate-700 text-white px-10 py-4 font-bold text-xs uppercase tracking-widest text-center hover:bg-slate-800">Consultation</a>
             </div>
         </div>
     </section>
 
-    <!-- PAGE: ABOUT -->
-    <section id="about" class="page pt-40 pb-24 px-6 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid lg:grid-cols-2 gap-20 items-center">
-                <div>
-                    <h2 class="text-amber-600 font-black uppercase text-xs tracking-widest mb-6">Our Legacy</h2>
-                    <h3 class="text-5xl lg:text-7xl font-bold mb-8">Advocacy Rooted in 35 Years of Excellence.</h3>
-                    <p class="text-slate-600 text-lg leading-relaxed mb-8">Founded in New Delhi, Pari & Co has evolved from a boutique litigation chamber to a premier multi-service firm. We navigate the cultural and commercial nuances of the Indian market with surgical precision.</p>
-                    <div class="grid grid-cols-2 gap-8 border-t pt-12">
-                        <div><p class="text-4xl font-bold">500+</p><p class="text-[10px] uppercase text-slate-400 tracking-widest">Case Resolutions</p></div>
-                        <div><p class="text-4xl font-bold">4</p><p class="text-[10px] uppercase text-slate-400 tracking-widest">Offices in India</p></div>
-                    </div>
-                </div>
-                <div class="bg-slate-50 aspect-video lg:aspect-square flex items-center justify-center border">
-                    <span class="serif text-8xl text-slate-200">P&C</span>
+    <!-- ABOUT -->
+    <section id="about" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-amber-600 font-black uppercase text-xs tracking-widest mb-6">Our Legacy</h2>
+                <h3 class="text-4xl lg:text-6xl font-bold mb-8">Advocacy Rooted in Ethics.</h3>
+                <p class="text-slate-600 text-lg leading-relaxed mb-8">Based in the heart of New Delhi, Pari & Co has built its reputation on the pillars of transparency, speed, and absolute client confidentiality. We represent the voices defining India's modern economy.</p>
+                <div class="flex gap-12 border-t pt-10">
+                    <div><p class="text-3xl font-bold">35+</p><p class="text-[10px] uppercase text-slate-400 tracking-widest">Combined Years</p></div>
+                    <div><p class="text-3xl font-bold">500+</p><p class="text-[10px] uppercase text-slate-400 tracking-widest">Global Clients</p></div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- PAGE: DOMAINS -->
-    <section id="domains" class="page pt-40 pb-24 px-6 bg-slate-50">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-20">
-                <h2 class="text-amber-600 font-black uppercase text-xs tracking-widest mb-4">Practice Domains</h2>
-                <h3 class="text-5xl font-bold">Deep Expertise.</h3>
-            </div>
-            <div class="grid lg:grid-cols-3 gap-8">
-                <div class="bg-white p-12 border hover:border-amber-500 transition-all">
-                    <h4 class="text-2xl font-bold mb-4">Corporate & M&A</h4>
-                    <p class="text-slate-500 text-sm mb-6">Inbound & Outbound investment advisory, private equity exits, and SEBI compliance.</p>
-                    <ul class="text-[10px] font-bold text-slate-400 space-y-2 uppercase tracking-widest">
-                        <li>• Joint Ventures</li>
-                        <li>• Due Diligence</li>
-                    </ul>
-                </div>
-                <div class="bg-white p-12 border hover:border-amber-500 transition-all">
-                    <h4 class="text-2xl font-bold mb-4">Taxation</h4>
-                    <p class="text-slate-500 text-sm mb-6">Comprehensive GST advisory and representation for complex Transfer Pricing disputes.</p>
-                    <ul class="text-[10px] font-bold text-slate-400 space-y-2 uppercase tracking-widest">
-                        <li>• Indirect Tax</li>
-                        <li>• Appellate Advocacy</li>
-                    </ul>
-                </div>
-                <div class="bg-white p-12 border hover:border-amber-500 transition-all">
-                    <h4 class="text-2xl font-bold mb-4">Dispute Resolution</h4>
-                    <p class="text-slate-500 text-sm mb-6">Representation in Supreme Court and International Arbitration centers globally.</p>
-                    <ul class="text-[10px] font-bold text-slate-400 space-y-2 uppercase tracking-widest">
-                        <li>• Commercial Suits</li>
-                        <li>• NCLT Proceedings</li>
-                    </ul>
+            <div class="bg-slate-50 aspect-square flex items-center justify-center border border-slate-200">
+                <div class="p-12 border-4 border-amber-500/20 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/></svg>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- PAGE: TEAM -->
-    <section id="team" class="page pt-40 pb-24 px-6 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <h3 class="text-5xl font-bold mb-16">The Partners.</h3>
-            <div class="grid md:grid-cols-3 gap-12">
-                <div>
-                    <div class="aspect-[4/5] bg-slate-100 mb-6 flex items-center justify-center serif text-4xl text-slate-300">AP</div>
-                    <h4 class="text-xl font-bold">Adv. Anjali Pari</h4>
-                    <p class="text-[10px] uppercase text-amber-600 font-black tracking-widest">Founding Partner</p>
-                </div>
-                <div>
-                    <div class="aspect-[4/5] bg-slate-100 mb-6 flex items-center justify-center serif text-4xl text-slate-300">VM</div>
-                    <h4 class="text-xl font-bold">Vikram Malhotra</h4>
-                    <p class="text-[10px] uppercase text-amber-600 font-black tracking-widest">Senior Partner</p>
-                </div>
-                <div>
-                    <div class="aspect-[4/5] bg-slate-100 mb-6 flex items-center justify-center serif text-4xl text-slate-300">SR</div>
-                    <h4 class="text-xl font-bold">Siddharth Reddy</h4>
-                    <p class="text-[10px] uppercase text-amber-600 font-black tracking-widest">Partner</p>
+    <!-- PRACTICE AREAS -->
+    <section id="domains" class="py-24 px-6 bg-slate-50">
+        <div class="max-w-7xl mx-auto text-center mb-16">
+            <h2 class="text-amber-600 font-black uppercase text-xs tracking-widest mb-4">Domains</h2>
+            <h3 class="text-4xl lg:text-6xl font-bold">Strategic Excellence.</h3>
+        </div>
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-10 border hover:border-amber-500 transition-all">
+                <h4 class="text-2xl font-bold mb-4">Corporate & M&A</h4>
+                <p class="text-slate-500 mb-6 text-sm">Strategic advisory on cross-border acquisitions, joint ventures, and private equity exits under the Companies Act.</p>
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-[9px] font-bold text-slate-400 border px-3 py-1 rounded-full uppercase">SEBI</span>
+                    <span class="text-[9px] font-bold text-slate-400 border px-3 py-1 rounded-full uppercase">Due Diligence</span>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- PAGE: AWARDS -->
-    <section id="awards" class="page pt-40 pb-24 px-6 bg-slate-950 text-white">
-        <div class="max-w-7xl mx-auto">
-            <h3 class="text-5xl font-bold mb-16">Accolades.</h3>
-            <div class="space-y-6">
-                <div class="p-8 border border-slate-800 flex justify-between items-center">
-                    <div>
-                        <h4 class="text-xl font-bold">National Law Firm of the Year</h4>
-                        <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">India Legal Awards 2024</p>
-                    </div>
-                    <span class="serif text-3xl italic text-slate-700">2024</span>
-                </div>
-                <div class="p-8 border border-slate-800 flex justify-between items-center">
-                    <div>
-                        <h4 class="text-xl font-bold">Tier 1: Corporate M&A</h4>
-                        <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">The Legal 500 Asia Pacific</p>
-                    </div>
-                    <span class="serif text-3xl italic text-slate-700">2023</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PAGE: ARTICLES -->
-    <section id="articles" class="page pt-40 pb-24 px-6 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <h3 class="text-5xl font-bold mb-16">Legal Insights.</h3>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-slate-50 p-10 border">
-                    <span class="text-[10px] font-black text-amber-600 uppercase mb-4 block tracking-widest">Technology Law</span>
-                    <h4 class="text-2xl font-bold mb-6">Impact of Digital Data Protection Act on Startups</h4>
-                    <p class="text-slate-500 mb-8 text-sm">An analysis of the 2023 legislation and its immediate compliance requirements for Indian tech companies.</p>
-                    <span class="text-[9px] font-bold text-slate-400 uppercase">12 Min Read • Oct 2023</span>
-                </div>
-                <div class="bg-slate-50 p-10 border">
-                    <span class="text-[10px] font-black text-amber-600 uppercase mb-4 block tracking-widest">Corporate Law</span>
-                    <h4 class="text-2xl font-bold mb-6">Pre-Pack Insolvency Procedures for MSMEs</h4>
-                    <p class="text-slate-500 mb-8 text-sm">Understanding the IBC amendments and how small businesses can leverage pre-packs for survival.</p>
-                    <span class="text-[9px] font-bold text-slate-400 uppercase">8 Min Read • Nov 2023</span>
+            <div class="bg-white p-10 border hover:border-amber-500 transition-all">
+                <h4 class="text-2xl font-bold mb-4">Dispute Resolution</h4>
+                <p class="text-slate-500 mb-6 text-sm">Representation in the Supreme Court, High Courts, and NCLT for high-stakes commercial litigation.</p>
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-[9px] font-bold text-slate-400 border px-3 py-1 rounded-full uppercase">NCLT</span>
+                    <span class="text-[9px] font-bold text-slate-400 border px-3 py-1 rounded-full uppercase">Arbitration</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-950 text-white py-20 px-6 border-t border-slate-900">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-3 gap-16">
+    <footer id="contact" class="bg-slate-950 text-white py-20 px-6">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-3 gap-16 border-b border-slate-900 pb-16">
             <div>
-                <h2 class="text-2xl font-bold mb-6 serif">PARI <span class="text-amber-500">&</span> CO</h2>
-                <p class="text-slate-500 text-sm leading-relaxed">Premier Indian legal counsel. Licensed by the Bar Council of Delhi. New Delhi HQ.</p>
+                <h2 class="text-2xl font-bold mb-6">PARI <span class="text-amber-500">&</span> CO</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8">Full-service advocacy for the modern Indian economy. Licensed by the Bar Council of Delhi.</p>
             </div>
             <div>
-                <h4 class="text-amber-500 font-bold uppercase text-[10px] tracking-widest mb-6">Offices</h4>
-                <p class="text-slate-400 text-sm leading-relaxed mb-4">Statesman House, New Delhi 110001<br>Nariman Point, Mumbai 400021</p>
-                <p class="text-xl font-bold">+91 11 4555 0100</p>
+                <h4 class="text-amber-500 font-bold uppercase text-[10px] tracking-widest mb-6">HQ Office</h4>
+                <p class="text-slate-400 text-sm leading-relaxed">Statesman House, 6th Floor,<br>Barakhamba Road, Connaught Place,<br>New Delhi 110001</p>
             </div>
-            <div class="flex flex-col items-start lg:items-end">
-                <button onclick="showPage('home')" class="text-slate-500 hover:text-white mb-2 text-sm">Home</button>
-                <button onclick="showPage('about')" class="text-slate-500 hover:text-white mb-2 text-sm">About Us</button>
-                <button onclick="showPage('team')" class="text-slate-500 hover:text-white mb-2 text-sm">Our Team</button>
-                <button onclick="showPage('domains')" class="text-slate-500 hover:text-white mb-2 text-sm">Practice Areas</button>
+            <div>
+                <h4 class="text-amber-500 font-bold uppercase text-[10px] tracking-widest mb-6">Connect</h4>
+                <p class="text-3xl font-bold">+91 11 4555 0100</p>
+                <p class="text-xs text-slate-600 mt-2">contact@parilegal.com</p>
             </div>
+        </div>
+        <div class="max-w-7xl mx-auto pt-10 text-center lg:text-left text-[9px] font-bold uppercase tracking-widest text-slate-700">
+            © 2024 Pari & Co LLP. All Rights Reserved. Attorney Advertising.
         </div>
     </footer>
 
     <script>
-        function showPage(pageId) {
-            // Hide all pages
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(p => p.classList.remove('active'));
-            
-            // Show requested page
-            const activePage = document.getElementById(pageId);
-            activePage.classList.add('active');
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Close mobile menu if open
-            document.getElementById('mobile-overlay').classList.add('hidden');
-            
-            // Handle Navigation color based on page
-            const navbar = document.getElementById('navbar');
-            if(pageId === 'home' || pageId === 'awards') {
-                navbar.classList.remove('nav-scrolled');
-                document.getElementById('logo').classList.add('text-white');
-                document.getElementById('logo').classList.remove('text-slate-900');
-                document.getElementById('menu-toggle').classList.add('text-white');
-                document.getElementById('menu-toggle').classList.remove('text-slate-900');
-            } else {
-                navbar.classList.add('nav-scrolled');
-                document.getElementById('logo').classList.remove('text-white');
-                document.getElementById('logo').classList.add('text-slate-900');
-                document.getElementById('menu-toggle').classList.remove('text-white');
-                document.getElementById('menu-toggle').classList.add('text-slate-900');
-            }
-        }
+        const navbar = document.getElementById('navbar');
+        const logoText = document.getElementById('logo-text');
+        const menuBtn = document.getElementById('menu-btn');
+        const navLinks = document.getElementById('nav-links');
 
-        function toggleMobileMenu() {
-            const overlay = document.getElementById('mobile-overlay');
-            overlay.classList.toggle('hidden');
-        }
-
-        // Navbar Scroll Effect
         window.onscroll = function() {
-            const navbar = document.getElementById('navbar');
-            const logo = document.getElementById('logo');
-            const toggle = document.getElementById('menu-toggle');
-            
-            // Only trigger scroll background if on home page or awards (the dark pages)
-            const activePage = document.querySelector('.page.active').id;
-            
             if (window.scrollY > 50) {
                 navbar.classList.add('nav-scrolled');
-                logo.classList.add('text-slate-900');
-                logo.classList.remove('text-white');
-                toggle.classList.add('text-slate-900');
-                toggle.classList.remove('text-white');
-            } else if (activePage === 'home' || activePage === 'awards') {
+                logoText.classList.remove('text-white');
+                logoText.classList.add('text-slate-900');
+                menuBtn.classList.remove('text-white');
+                menuBtn.classList.add('text-slate-900');
+                navLinks.classList.remove('text-slate-300');
+                navLinks.classList.add('text-slate-600');
+            } else {
                 navbar.classList.remove('nav-scrolled');
-                logo.classList.add('text-white');
-                logo.classList.remove('text-slate-900');
-                toggle.classList.add('text-white');
-                toggle.classList.remove('text-slate-900');
+                logoText.classList.add('text-white');
+                logoText.classList.remove('text-slate-900');
+                menuBtn.classList.add('text-white');
+                menuBtn.classList.remove('text-slate-900');
+                navLinks.classList.add('text-slate-300');
+                navLinks.classList.remove('text-slate-600');
             }
         };
+
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+            const icon = document.getElementById('menu-icon');
+            if(menu.classList.contains('active')) {
+                icon.innerHTML = '<path d="M18 6L6 18M6 6l12 12"/>';
+            } else {
+                icon.innerHTML = '<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>';
+            }
+        }
     </script>
 </body>
 </html>
